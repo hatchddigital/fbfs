@@ -7,8 +7,10 @@
   "scripts": {
     "test": "grunt qunit"
   },
-  "devDependencies": {
-    "grunt": "~0.3.17",
+  "dependencies": {
     "handlebars": "1.0.10"
+  }
+  "devDependencies": {
+    "grunt": "~0.3.17"
   }
 }
