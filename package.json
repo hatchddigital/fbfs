@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "handlebars": "1.0.10"
-  }
+  },
   "devDependencies": {
     "grunt": "~0.3.17"
   }
