@@ -32,9 +32,12 @@ window.FBFS = (function($) {
         var that = this;
         // Set and extend default options with user provided
         this.options = $.extend({
-            'onUserSelect': false
+            'onUserSelect': false,
+            'user_limit': 10,
+            'userTemplate': this.userTemplate
         }, options);
         this.$element = $(element);
+        that.$element.find('.facebook-friends').addClass('state-empty');
         // Attach events
         var $search = this.$element.find('.search');
         $search.on('keyup', function () {
@@ -52,17 +55,18 @@ window.FBFS = (function($) {
      */
     FBFS.prototype.onSearch = function onSearch(str) {
         var that = this
-          , query = this.FQL_SEARCH({'name': str })
+          , query = this.FQL_SEARCH({'name': str.toLowerCase(), 'limit': that.options.user_limit })
           , $list = $('<ul class="facebook-friends"></ul>')
           , $friends_list = this.$element.find('.facebook-friends');
 
         // Don't search unless the string is acceptable, delete all
         if (!str.length) {
-            $friends_list.replaceWith($list);
+            //$friends_list.replaceWith($list);
+            that.$element.find('.facebook-friends').addClass('state-empty');
         }
 
         // Set searching flag for UI changes
-        that.$element.addClass('state-searching');
+        that.$element.find('.search').addClass('state-searching');
         FB.api({
             'method': 'fql.query',
             'query': query
@@ -76,16 +80,22 @@ window.FBFS = (function($) {
                     return false;
                 }
 
-                that.$element.removeClass('state-searching');
+                that.$element.find('.search').removeClass('state-searching');
 
                 if (response.length) {
+
+                    that.$element.find('.facebook-friends').removeClass('state-empty');
                     for (i = response.length - 1; i >= 0; i--) {
-                        $li = $(that.USER_TEMPLATE(response[i]));
+                        $li = $(that.options.userTemplate(response[i]));
                         $li.data('user', response[i]);
                         $list.append($li);
                     }
+                    $friends_list.replaceWith($list);
                 }
-                $friends_list.replaceWith($list);
+                else {
+                    that.$element.find('.facebook-friends').addClass('state-empty');
+                }
+
 
                 // Callback, if set.
                 callback = that.options.onUserSelect;
@@ -107,7 +117,7 @@ window.FBFS = (function($) {
      *   }
      * @return {string} HTML from compiled template
      */
-    FBFS.prototype.USER_TEMPLATE = Handlebars.compile(
+    FBFS.prototype.userTemplate = Handlebars.compile(
         '<li class="fbfs-user">' +
             '<img alt="Portrait of {{name}}" class="fb-profileimg" ' +
                   'src="https://graph.facebook.com/{{uid}}/picture" />'+
@@ -130,7 +140,8 @@ window.FBFS = (function($) {
             "(SELECT uid2 " +
             " FROM friend " +
             " WHERE uid1 = me()) " +
-        "AND strpos(lower(name),'{{name}}') >= 0");
+        "AND strpos(lower(name),'{{name}}') >= 0" +
+        "LIMIT {{limit}}");
 
     /**
      * jQuery function for launching FBFS modules on HTML elements.
