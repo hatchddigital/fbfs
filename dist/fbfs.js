@@ -51,7 +51,10 @@ window.FBFS = (function($) {
      */
     FBFS.prototype.onSearch = function onSearch(str) {
         var that = this
-          , query = this.FQL_SEARCH({'name': str.toLowerCase(), 'limit': that.options.user_limit })
+          , query = this.searchUsersFQL({
+                'name': str.toLowerCase(),
+                'limit': that.options.user_limit
+            })
           , $list = $('<ul class="facebook-friends"></ul>')
           , $friends_list = this.$element.find('.facebook-friends');
 
@@ -129,7 +132,7 @@ window.FBFS = (function($) {
      *   }
      * @return {string} HTML from compliled template
      */
-    FBFS.prototype.FQL_SEARCH = Handlebars.compile(
+    FBFS.prototype.searchUsersFQL = Handlebars.compile(
         "SELECT uid, username, first_name, last_name, name " +
         "FROM user " +
         "WHERE uid IN " +
