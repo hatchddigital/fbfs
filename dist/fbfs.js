@@ -1,4 +1,4 @@
-/*! Facebook Friend Search - v0.1.0 - 2013-03-26
+/*! Facebook Friend Search - v0.1.1 - 2013-04-04
 * https://github.com/hatchddigital/fbfs
 * Copyright (c) 2013 Hatchd Digital; Licensed MIT */
 
@@ -82,7 +82,6 @@ window.FBFS = (function($) {
                 that.$element.find('.search').removeClass('state-searching');
 
                 if (response.length) {
-
                     that.$element.find('.facebook-friends').removeClass('state-empty');
                     for (i = response.length - 1; i >= 0; i--) {
                         $li = $(that.options.userTemplate(response[i]));

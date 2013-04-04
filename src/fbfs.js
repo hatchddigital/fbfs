@@ -86,7 +86,6 @@ window.FBFS = (function($) {
                 that.$element.find('.search').removeClass('state-searching');
 
                 if (response.length) {
-
                     that.$element.find('.facebook-friends').removeClass('state-empty');
                     for (i = response.length - 1; i >= 0; i--) {
                         $li = $(that.options.userTemplate(response[i]));
