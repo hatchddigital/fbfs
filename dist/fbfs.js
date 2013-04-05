@@ -1,4 +1,4 @@
-/*! Facebook Friend Search - v0.1.1 - 2013-04-05
+/*! Facebook Friend Search - v0.1.2 - 2013-04-05
 * https://github.com/hatchddigital/fbfs
 * Copyright (c) 2013 Hatchd Digital; Licensed MIT */
 
