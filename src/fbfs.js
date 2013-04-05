@@ -6,7 +6,11 @@
  * Licensed under the MIT license.
  */
 
+/*jshint camelcase:false, laxcomma:true */
+/*global FB, Handlebars, jQuery */
+
 window.FBFS = (function($) {
+    'use strict';
 
     /**
      * FBFS constructor method. Will return a Facebook Friend Search
@@ -34,7 +38,8 @@ window.FBFS = (function($) {
         this.options = $.extend({
             'onUserSelect': false,
             'user_limit': 10,
-            'userTemplate': this.userTemplate
+            'userTemplate': this.userTemplate,
+            'autoclose': true
         }, options);
         this.$element = $(element);
         that.$element.find('.facebook-friends').addClass('state-empty');
@@ -64,8 +69,9 @@ window.FBFS = (function($) {
 
         // Don't search unless the string is acceptable, delete all
         if (!str.length) {
-            //$friends_list.replaceWith($list);
+            $friends_list.replaceWith($list);
             that.$element.find('.facebook-friends').addClass('state-empty');
+            return;
         }
 
         // Set searching flag for UI changes
@@ -73,41 +79,42 @@ window.FBFS = (function($) {
         FB.api({
             'method': 'fql.query',
             'query': query
-            },
-            function (response) {
-                var $li, i, callback;
+        },
+        function (response) {
+            var $li, i, callback;
 
-                // Done searching how should we handle this error?
-                if (typeof response.error_code === "string") {
-                    // window.console.log('FB error: ' + response.error_msg);
-                    return false;
-                }
-
-                that.$element.find('.search').removeClass('state-searching');
-
-                if (response.length) {
-                    that.$element.find('.facebook-friends').removeClass('state-empty');
-                    for (i = response.length - 1; i >= 0; i--) {
-                        $li = $(that.options.userTemplate(response[i]));
-                        $li.data('user', response[i]);
-                        $list.append($li);
-                    }
-                    $friends_list.replaceWith($list);
-                }
-                else {
-                    that.$element.find('.facebook-friends').addClass('state-empty');
-                }
-
-
-                // Callback, if set.
-                callback = that.options.onUserSelect;
-                $list.find('li').on('click', function () {
-                    if (callback && typeof callback === "function") {
-                        callback.call(that, $(this).data('user'));
-                    }
-                });
+            // Done searching how should we handle this error?
+            if (typeof response.error_code === 'string') {
+                return false;
             }
-        );
+
+            that.$element.find('.search').removeClass('state-searching');
+
+            if (response.length) {
+                that.$element.find('.facebook-friends').removeClass('state-empty');
+                for (i = response.length - 1; i >= 0; i--) {
+                    $li = $(that.options.userTemplate(response[i]));
+                    $li.data('user', response[i]);
+                    $list.append($li);
+                }
+                $friends_list.replaceWith($list);
+            }
+            else {
+                that.$element.find('.facebook-friends').addClass('state-empty');
+            }
+
+            // Callback, if set.
+            callback = that.options.onUserSelect;
+            $list.find('li').on('click', function () {
+                if (callback && typeof callback === 'function') {
+                    callback.call(that, $(this).data('user'));
+                }
+                // Hide dropdown on select, if asked
+                if (that.options.autoclose) {
+                    $list.html('');
+                }
+            });
+        });
     };
 
     /**
@@ -136,14 +143,14 @@ window.FBFS = (function($) {
      * @return {string} HTML from compliled template
      */
     FBFS.prototype.searchUsersFQL = Handlebars.compile(
-        "SELECT uid, username, first_name, last_name, name " +
-        "FROM user " +
-        "WHERE uid IN " +
-            "(SELECT uid2 " +
-            " FROM friend " +
-            " WHERE uid1 = me()) " +
-        "AND strpos(lower(name),'{{name}}') >= 0" +
-        "LIMIT {{limit}}");
+        'SELECT uid, username, first_name, last_name, name ' +
+        'FROM user ' +
+        'WHERE uid IN ' +
+            '(SELECT uid2 ' +
+            ' FROM friend ' +
+            ' WHERE uid1 = me()) ' +
+        'AND strpos(lower(name),\'{{name}}\') >= 0' +
+        'LIMIT {{limit}}');
 
     /**
      * jQuery function for launching FBFS modules on HTML elements.
@@ -153,7 +160,7 @@ window.FBFS = (function($) {
     $.fn.fbfs = function (options) {
         options = options || {};
         this.each(function () {
-            var $fbfs = new FBFS(this, options);
+            return new FBFS(this, options);
         });
     };
 
