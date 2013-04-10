@@ -113,9 +113,10 @@ window.FBFS = (function($) {
 
             // Callback, if set.
             callback = that.options.onUserSelect;
-            $list.find('li').on('click', function () {
+            $list.find('li').on('click', function (e) {
+                e.preventDefault();
                 if (callback && typeof callback === 'function') {
-                    callback.call(that, $(this).data('user'));
+                    callback.call(that, $(this).data('user'), e);
                 }
                 // Hide dropdown on select, if asked
                 if (that.options.autoclose) {
@@ -136,9 +137,11 @@ window.FBFS = (function($) {
      */
     FBFS.prototype.userTemplate = Handlebars.compile(
         '<li class="fbfs-user">' +
-            '<img alt="Portrait of {{name}}" class="fb-profileimg" ' +
-                  'src="https://graph.facebook.com/{{uid}}/picture" />'+
-             '<a id="{{uid}}" class="fb-name" href="#">{{name}}</a>' +
+            '<button type="button" id="{{uid}}" class="fb-name">'+
+                '<img alt="Portrait of {{name}}" class="fb-profileimg" ' +
+                     'src="https://graph.facebook.com/{{uid}}/picture" />'+
+                '{{name}}' +
+            '</button>' +
         '</li>');
 
     /**
