@@ -1,4 +1,4 @@
-/*! Facebook Friend Search - v0.1.2 - 2013-04-05
+/*! Facebook Friend Search - v0.1.2 - 2013-04-10
 * https://github.com/hatchddigital/fbfs
 * Copyright (c) 2013 Hatchd Digital; Licensed MIT */
 
@@ -39,10 +39,18 @@ window.FBFS = (function($) {
         }, options);
         this.$element = $(element);
         that.$element.find('.facebook-friends').addClass('state-empty');
-        // Attach events
+        /**
+         * Attach events
+         */
         var $search = this.$element.find('.search');
+        var $clear_search = this.$element.find('.search-clearinput');
+        // Every change to the value do a search
         $search.on('keyup', function () {
             that.onSearch($(this).val());
+        });
+        // Clear the field and clear the search by doing an empty search
+        $clear_search.on('click', function () {
+            $search.val('').trigger('keyup');
         });
         return this;
     };
@@ -71,7 +79,7 @@ window.FBFS = (function($) {
         }
 
         // Set searching flag for UI changes
-        that.$element.find('.search').addClass('state-searching');
+        that.$element.addClass('state-searching');
         FB.api({
             'method': 'fql.query',
             'query': query
@@ -84,7 +92,7 @@ window.FBFS = (function($) {
                 return false;
             }
 
-            that.$element.find('.search').removeClass('state-searching');
+            that.$element.removeClass('state-searching');
 
             if (response.length) {
                 that.$element.find('.facebook-friends').removeClass('state-empty');
