@@ -91,5 +91,7 @@ Please note that if you wish to use this example you must provide your own
 working APP_ID in the `<head>` Facebook init code.
 
 ## Release History
+- v0.1.3 Added new event for clearing the input with expected markup added to
+the example. Moved state-searching to the parent element wrapper not the input.
 - v0.1.0 Initial working plugin to allow searching and a simple callback when
 a friend is selected by the user of the script.
