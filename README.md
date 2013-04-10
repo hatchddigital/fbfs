@@ -91,6 +91,8 @@ Please note that if you wish to use this example you must provide your own
 working APP_ID in the `<head>` Facebook init code.
 
 ## Release History
+- v0.1.4 Fixing a bug with no preventDefault on user select and changing
+example markup to use buttons instead of a broken <a>
 - v0.1.3 Added new event for clearing the input with expected markup added to
 the example. Moved state-searching to the parent element wrapper not the input.
 - v0.1.0 Initial working plugin to allow searching and a simple callback when
