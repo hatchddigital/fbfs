@@ -44,7 +44,7 @@ window.FBFS = (function($) {
         }, options);
         this.$element = $(element);
         this.$element.find('.facebook-friends').addClass('state-empty');
-        this.$element.find('.facebook-friends').addClass('state-empty');
+        this.current_request = 0;
         /**
          * Attach events
          */

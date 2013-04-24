@@ -14,7 +14,7 @@
           window.fbAsyncInit = function() {
             // init the FB JS SDK
             FB.init({
-              appId      : '138602922959751',
+              appId      : '496972013696684',
               status     : true,
               cookie     : true,
               xfbml      : true
@@ -78,6 +78,9 @@
                     var $user_list = $('.selected-users')
                       , $user_item = $('<li class="su-user">' + user.name + '</li>');
                     $user_list.append($user_item);
+                },
+                'errorCallback': function (response) {
+                    alert('Use must be logged into Facebook!');
                 }
             });
         </script>

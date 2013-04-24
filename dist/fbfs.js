@@ -1,4 +1,4 @@
-/*! Facebook Friend Search - v0.1.4 - 2013-04-24
+/*! Facebook Friend Search - v0.1.5 - 2013-04-24
 * https://github.com/hatchddigital/fbfs
 * Copyright (c) 2013 Hatchd Digital; Licensed MIT */
 
@@ -40,7 +40,7 @@ window.FBFS = (function($) {
         }, options);
         this.$element = $(element);
         this.$element.find('.facebook-friends').addClass('state-empty');
-        this.$element.find('.facebook-friends').addClass('state-empty');
+        this.current_request = 0;
         /**
          * Attach events
          */
