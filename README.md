@@ -91,6 +91,8 @@ Please note that if you wish to use this example you must provide your own
 working APP_ID in the `<head>` Facebook init code.
 
 ## Release History
+- v0.1.5 Added errorCallback option which is used for onSearch to allow
+user apps to handle FB API errors. The example has a simple use case.
 - v0.1.4 Fixing a bug with no preventDefault on user select and changing
 example markup to use buttons instead of a broken <a>
 - v0.1.3 Added new event for clearing the input with expected markup added to
