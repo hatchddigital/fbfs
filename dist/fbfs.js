@@ -35,7 +35,8 @@ window.FBFS = (function($) {
             'onUserSelect': false,
             'user_limit': 10,
             'userTemplate': this.userTemplate,
-            'autoclose': true
+            'autoclose': true,
+            'errorCallback': false
         }, options);
         this.$element = $(element);
         this.$element.find('.facebook-friends').addClass('state-empty');
@@ -65,7 +66,7 @@ window.FBFS = (function($) {
      *   handle Facebook API errors.
      * @return null
      */
-    FBFS.prototype.onSearch = function onSearch(str, errorCallback) {
+    FBFS.prototype.onSearch = function onSearch(str) {
         var fbfs = this
           , query = this.searchUsersFQL({
                 'name': str.toLowerCase(),
@@ -98,8 +99,8 @@ window.FBFS = (function($) {
 
             // Done searching how should we handle this error?
             if (typeof response.error_code === 'string') {
-                if (typeof errorCallback === 'function') {
-                    errorCallback.call(fbfs, 'onSearch');
+                if (fbfs.options.errorCallback) {
+                    fbfs.options.errorCallback.call(fbfs, response);
                 }
                 return false;
             }
