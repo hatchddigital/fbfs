@@ -33,7 +33,7 @@ window.FBFS = (function($) {
      * @param {JSON} options JSON settings matching available user options.
      */
     var FBFS = function FBFS(element, options) {
-        var that = this;
+        var fbfs = this;
         // Set and extend default options with user provided
         this.options = $.extend({
             'onUserSelect': false,
@@ -42,7 +42,8 @@ window.FBFS = (function($) {
             'autoclose': true
         }, options);
         this.$element = $(element);
-        that.$element.find('.facebook-friends').addClass('state-empty');
+        this.$element.find('.facebook-friends').addClass('state-empty');
+        this.$element.find('.facebook-friends').addClass('state-empty');
         /**
          * Attach events
          */
@@ -50,7 +51,7 @@ window.FBFS = (function($) {
         var $clear_search = this.$element.find('.search-clearinput');
         // Every change to the value do a search
         $search.on('keyup', function () {
-            that.onSearch($(this).val());
+            fbfs.onSearch($(this).val());
         });
         // Clear the field and clear the search by doing an empty search
         $clear_search.on('click', function () {
@@ -64,26 +65,29 @@ window.FBFS = (function($) {
      * provided by the user. This will update the friend list with any
      * friends that match.
      * @param  {string} str User supplied to match against user's friends
+     * @param  {function} erroCallback Callback function to catch and
+     *   handle Facebook API errors.
      * @return null
      */
-    FBFS.prototype.onSearch = function onSearch(str) {
-        var that = this
+    FBFS.prototype.onSearch = function onSearch(str, errorCallback) {
+        var fbfs = this
           , query = this.searchUsersFQL({
                 'name': str.toLowerCase(),
-                'limit': that.options.user_limit
+                'limit': fbfs.options.user_limit
             })
           , $list = $('<ul class="facebook-friends"></ul>')
-          , $friends_list = this.$element.find('.facebook-friends');
+          , $friends_list = this.$element.find('.facebook-friends')
+          , this_request = ++fbfs.current_request;
 
         // Don't search unless the string is acceptable, delete all
         if (!str.length) {
             $friends_list.replaceWith($list);
-            that.$element.find('.facebook-friends').addClass('state-empty');
+            fbfs.$element.find('.facebook-friends').addClass('state-empty');
             return;
         }
 
         // Set searching flag for UI changes
-        that.$element.addClass('state-searching');
+        fbfs.$element.addClass('state-searching');
         FB.api({
             'method': 'fql.query',
             'query': query
@@ -91,35 +95,43 @@ window.FBFS = (function($) {
         function (response) {
             var $li, i, callback;
 
+            // Only allow the last reqest sent to be used
+            if (fbfs.current_request !== this_request) {
+                return;
+            }
+
             // Done searching how should we handle this error?
             if (typeof response.error_code === 'string') {
+                if (typeof errorCallback === 'function') {
+                    errorCallback.call(fbfs, 'onSearch');
+                }
                 return false;
             }
 
-            that.$element.removeClass('state-searching');
+            fbfs.$element.removeClass('state-searching');
 
             if (response.length) {
-                that.$element.find('.facebook-friends').removeClass('state-empty');
+                fbfs.$element.find('.facebook-friends').removeClass('state-empty');
                 for (i = response.length - 1; i >= 0; i--) {
-                    $li = $(that.options.userTemplate(response[i]));
+                    $li = $(fbfs.options.userTemplate(response[i]));
                     $li.data('user', response[i]);
                     $list.append($li);
                 }
                 $friends_list.replaceWith($list);
             }
             else {
-                that.$element.find('.facebook-friends').addClass('state-empty');
+                fbfs.$element.find('.facebook-friends').addClass('state-empty');
             }
 
             // Callback, if set.
-            callback = that.options.onUserSelect;
+            callback = fbfs.options.onUserSelect;
             $list.find('li').on('click', function (e) {
                 e.preventDefault();
                 if (callback && typeof callback === 'function') {
-                    callback.call(that, $(this).data('user'), e);
+                    callback.call(fbfs, $(this).data('user'), e);
                 }
                 // Hide dropdown on select, if asked
-                if (that.options.autoclose) {
+                if (fbfs.options.autoclose) {
                     $list.html('');
                 }
             });
